@@ -1,13 +1,19 @@
-import { Button } from '@/components/ui/Button'
-import React, { FC } from 'react'
-
+import { Button } from "@/components/ui/Button";
+import React, { FC } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/Sheet";
 const DashboardPage = () => {
   return (
     <div>
-        <Button variant="outline">Button</Button>
 
     </div>
-  )
-}
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;
