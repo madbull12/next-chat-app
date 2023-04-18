@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { CgSpinner } from "react-icons/cg";
 import { signIn } from "next-auth/react";
+import Logo from "@/components/Logo";
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -32,8 +33,8 @@ const LoginPage = () => {
     <div className="flex text-center justify-center items-center min-h-screen">
       <Card className="space-y-2 rounded-lg">
         <CardHeader className="space-y-4">
-          <CardTitle className="font-black text-5xl py-4 border-b  border-gray-300  ">
-            discu.
+          <CardTitle className="border-b  border-gray-300">
+            <Logo fontSize="text-5xl" />
           </CardTitle>
           <CardTitle className="text-3xl font-bold">Welcome back</CardTitle>
           <CardDescription>Sign in to your account</CardDescription>

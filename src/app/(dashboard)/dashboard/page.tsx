@@ -8,10 +8,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/Sheet";
+import Sidebar from "@/components/Sidebar";
 const DashboardPage = () => {
   return (
     <div>
-
+      <Sidebar />
     </div>
   );
 };
