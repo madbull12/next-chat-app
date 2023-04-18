@@ -11,29 +11,29 @@ interface LinkProps {
 }
 
 const Sidebar: React.FC = () => {
-  const links = [
+  const links:LinkProps[] = [
     {
       baseUrl: "/dashboard",
       title: "Dashboard",
       icon: <RxDashboard />,
     },
     {
-      baseUrl: "/messages",
+      baseUrl: "/dashboard/messages",
       title: "Messages",
       icon: <BsFillChatDotsFill />,
     },
     {
-      baseUrl: "/add-friends",
+      baseUrl: "/dashboard/add-friends",
       title: "Add Friends",
       icon: <AiOutlineUserAdd />,
     },
   ];
   return (
-    <div className="p-4 min-h-screen max-w-[250px] border-r ">
-      <div className="border-b border-gray-300">
+    <div className=" min-h-screen absolute left-0 top-0  max-w-[250px] border-r ">
+      <div className="border-b border-gray-300 px-4">
         <Logo fontSize="text-3xl" />
       </div>
-      <ul className="list-none py-4 text-xl ">
+      <ul className="list-none p-4 text-xl ">
         {links.map((link, i) => (
           <li
             key={i}
