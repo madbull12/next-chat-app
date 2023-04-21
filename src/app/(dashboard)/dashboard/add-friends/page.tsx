@@ -1,12 +1,18 @@
-import Body from '@/components/Body'
-import React from 'react'
+import AddFriendForm from "@/components/AddFriendForm";
+import Body from "@/components/Body";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import React from "react";
 
-const AddFriendPage = () => {
+const AddFriendPage:React.FC = () => {
   return (
     <Body>
-      <h1 className=''>Start a chat</h1>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold">Start a chat</h1>
+        <AddFriendForm />
+      </div>
     </Body>
-  )
-}
+  );
+};
 
-export default AddFriendPage
+export default AddFriendPage;

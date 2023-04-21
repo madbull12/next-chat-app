@@ -4,6 +4,7 @@ import Link from "next/link";
 import { RxDashboard } from "react-icons/rx";
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { AiOutlineUserAdd } from "react-icons/ai";
+import { Separator } from "./ui/Separator";
 interface LinkProps {
   baseUrl: string;
   title: string;
@@ -30,14 +31,15 @@ const Sidebar: React.FC = () => {
   ];
   return (
     <div className=" min-h-screen absolute left-0 top-0  max-w-[250px] border-r ">
-      <div className="border-b border-gray-300 px-4">
+      <div className=" px-4">
         <Logo fontSize="text-3xl" />
       </div>
+      <Separator orientation="horizontal" className="my-1 bg-gray-300" />
       <ul className="list-none p-4 text-xl ">
         {links.map((link, i) => (
           <li
             key={i}
-            className="group hover:bg-blue-600 hover:text-white rounded-lg p-2"
+            className="group hover:bg-accent-primary hover:text-white rounded-lg p-2"
           >
             <Link href={link.baseUrl} className="flex items-center gap-x-8">
               {link.icon}
