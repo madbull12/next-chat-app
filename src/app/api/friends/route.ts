@@ -1,4 +1,6 @@
+import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { addFriendValidator } from "@/lib/validations/add-friends";
 import { getServerSession } from "next-auth";
 
@@ -34,6 +36,30 @@ export async function POST(req: Request) {
         status: 400,
       });
     }
+    // check if user is already added
+    const isAlreadyAdded = (await fetchRedis(
+        'sismember',
+        `user:${data}:incoming_friend_requests`,
+        session.user.id
+      )) as 0 | 1
+  
+      if (isAlreadyAdded) {
+        return new Response('Already added this user', { status: 400 })
+      }
+  
+      // check if user is already friends
+      const isAlreadyFriends = (await fetchRedis(
+        'sismember',
+        `user:${session.user.id}:friends`,
+        data
+      )) as 0 | 1
+  
+      if (isAlreadyFriends) {
+        return new Response('Already friends with this user', { status: 400 })
+      }
+
+      await db.sadd(`user:${data}:incoming_friend_requests`, session.user.id)
+  
 
     console.log(data);
   } catch (err) {}
