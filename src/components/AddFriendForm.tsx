@@ -34,13 +34,13 @@ const AddFriendForm: React.FC = () => {
     } catch (error) {
       if (error instanceof z.ZodError) {
         setError("email", { message: error.message });
-        toast.error(`${error.message}`);
+        toast.error(`${errors.email?.message}`);
         return;
       }
 
       if (error instanceof AxiosError) {
         setError("email", { message: error.response?.data });
-        toast.error(`${error.message}`);
+        toast.error(`${errors.email?.message}`);
 
         return;
       }
