@@ -1,4 +1,6 @@
 import Sidebar from '@/components/Sidebar'
+import { authOptions } from '@/lib/auth'
+import { getServerSession } from 'next-auth'
 import React from 'react'
 
 interface LayoutProps {
@@ -9,7 +11,12 @@ export const metadata = {
   title: 'Dashboard',
   description: 'discu Dashboard',
 }
-const LayoutPage:React.FC<LayoutProps> = ({ children }) => {
+const DashboardLayout = async({ children }:LayoutProps) => {
+  const session = await getServerSession(authOptions);
+
+  if(!session) return null;
+  
+  
   return (
     <>
         <Sidebar />
@@ -18,4 +25,4 @@ const LayoutPage:React.FC<LayoutProps> = ({ children }) => {
   )
 }
 
-export default LayoutPage
+export default DashboardLayout
