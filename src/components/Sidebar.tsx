@@ -12,22 +12,27 @@ interface LinkProps {
   icon: any;
 }
 
-const FriendRequestOption = () => {
+const FriendRequestOption: React.FC<{ unseenRequest: number }> = ({
+  unseenRequest,
+}) => {
   return (
-    <li
-    className="group hover:bg-accent-primary hover:text-white rounded-lg p-2"
-  >
-    <Link href="/dashboard/friend-requests" className="flex items-center gap-x-8">
-      <AiOutlineUser />
+    <li className="group hover:bg-accent-primary hover:text-white rounded-lg p-2 relative">
+      <Link
+        href="/dashboard/requests"
+        className="flex items-center gap-x-8"
+      >
+        <AiOutlineUser />
 
-      <span>Friend Requests</span>
-    </Link>
-  </li>
-  )
-}
+        <span>Friend Requests</span>
+        {unseenRequest > 0 ? <span className="absolute -top-2 -right-2 bg-accent-secondary rounded-full w-4 h-4 text-xs grid place-items-center text-white ">{unseenRequest}</span> : null}
+        
+      </Link>
+    </li>
+  );
+};
 
-const Sidebar: React.FC = () => {
-  const links:LinkProps[] = [
+const Sidebar: React.FC<{ unseenRequest: number }> = ({ unseenRequest }) => {
+  const links: LinkProps[] = [
     {
       baseUrl: "/dashboard",
       title: "Dashboard",
@@ -46,7 +51,7 @@ const Sidebar: React.FC = () => {
   ];
   return (
     <div className="px-4 min-h-screen  absolute left-0 top-0  max-w-[250px] border-r ">
-      <div >
+      <div>
         <Logo fontSize="text-3xl" />
       </div>
       <Separator orientation="horizontal" className="my-1 bg-gray-300" />
@@ -63,7 +68,7 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
         ))}
-        <FriendRequestOption />
+        <FriendRequestOption unseenRequest={unseenRequest} />
 
         {/* <li>
           <Link href="/messages" className="flex items-center gap-x-8">
@@ -80,7 +85,6 @@ const Sidebar: React.FC = () => {
         </li> */}
       </ul>
       <ProfileOption />
-
     </div>
   );
 };

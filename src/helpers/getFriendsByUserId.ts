@@ -6,7 +6,6 @@ export const getFriendsByUserId = async(userId:string)=>{
         'smembers',
         `user:${userId}:friends`
       )) as string[]
-      console.log("friend ids", friendIds)
     
       const friends = await Promise.all(
         friendIds.map(async (friendId) => {

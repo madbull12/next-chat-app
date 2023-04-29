@@ -1,4 +1,5 @@
 import Sidebar from '@/components/Sidebar'
+import { fetchRedis } from '@/helpers/redis'
 import { authOptions } from '@/lib/auth'
 import { getServerSession } from 'next-auth'
 import React from 'react'
@@ -16,10 +17,16 @@ const DashboardLayout = async({ children }:LayoutProps) => {
 
   if(!session) return null;
   
+  const unseenRequestCount = (
+    (await fetchRedis(
+      'smembers',
+      `user:${session.user.id}:incoming_friend_requests`
+    )) as User[]
+  ).length
   
   return (
     <>
-        <Sidebar />
+        <Sidebar unseenRequest={unseenRequestCount} />
         {children}
     </>
   )
