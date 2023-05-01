@@ -9,7 +9,7 @@ interface LayoutProps {
 }
 
 export const metadata = {
-  title: 'Dashboard',
+  title: 'Dashboard | discu',
   description: 'discu Dashboard',
 }
 const DashboardLayout = async({ children }:LayoutProps) => {

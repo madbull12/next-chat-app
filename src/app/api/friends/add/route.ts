@@ -56,6 +56,8 @@ export async function POST(req: Request) {
       return new Response('Already friends with this user', { status: 400 })
     }
 
+
+
     // valid request, send friend request
 
     // await pusherServer.trigger(

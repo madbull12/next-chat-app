@@ -2,10 +2,11 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Button } from "./ui/Button";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface FriendRequestProps {
   friendRequests: IncomingFriendRequest[];
@@ -16,7 +17,23 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
   const { data: session } = useSession();
   const [friendRequests, setFriendRequests] =
     useState<IncomingFriendRequest[]>(_friendRequests);
-    console.log(_friendRequests)
+  console.log(_friendRequests);
+
+  const confirmRequestHandle = async (id: string) => {
+    await toast.promise(
+      axios.post("/api/friends/confirm", {
+        id,
+      }),
+      {
+        loading: "Adding friend...",
+        success: "Friend added",
+        error: "Oops something went wrong",
+      }
+    );
+    setFriendRequests((prev) =>
+      prev.filter((request) => request.senderId !== id)
+    );
+  };
 
   return (
     <>
@@ -35,24 +52,34 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
         <>
           <p className="text-xl font-bold">Friend requests</p>
           <div className="mt-4 space-y-4">
-          {friendRequests?.map((request) => (
-            <div className="flex items-start gap-x-2" key={request.senderId}>
-              <Avatar>
-                <AvatarImage  src={request.senderImage as string} height={80} width={80}  />
-                <AvatarFallback>{request.senderEmail?.slice(0,1)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-lg font-semibold">{request.senderName}</p>
-                <p className="text-sm text-gray-500">{request.senderEmail}</p>
-                <div className="flex items-center gap-x-2 mt-2">
-                  <Button className="bg-accent-primary hover:bg-accent-secondary">Confirm</Button>
-                  <Button variant={'outline'}>Delete</Button>
+            {friendRequests?.map((request) => (
+              <div className="flex items-start gap-x-2" key={request.senderId}>
+                <Avatar>
+                  <AvatarImage
+                    src={request.senderImage as string}
+                    height={80}
+                    width={80}
+                  />
+                  <AvatarFallback>
+                    {request.senderEmail?.slice(0, 1)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-lg font-semibold">{request.senderName}</p>
+                  <p className="text-sm text-gray-500">{request.senderEmail}</p>
+                  <div className="flex items-center gap-x-2 mt-2">
+                    <Button
+                      onClick={() => confirmRequestHandle(request.senderId)}
+                      className="bg-accent-primary hover:bg-accent-secondary"
+                    >
+                      Confirm
+                    </Button>
+                    <Button variant={"outline"}>Delete</Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
-          
         </>
       )}
     </>
