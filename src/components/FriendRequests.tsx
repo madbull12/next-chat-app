@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Button } from "./ui/Button";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface FriendRequestProps {
   friendRequests: IncomingFriendRequest[];
@@ -27,7 +27,7 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
       {
         loading: "Adding friend...",
         success: "Friend added",
-        error: "Oops something went wrong",
+        error: (err:AxiosError) => ` ${err.response?.data}`,
       }
     );
     setFriendRequests((prev) =>

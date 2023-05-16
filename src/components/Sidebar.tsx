@@ -39,7 +39,7 @@ const Sidebar: React.FC<{ unseenRequest: number }> = ({ unseenRequest }) => {
       icon: <RxDashboard />,
     },
     {
-      baseUrl: "/dashboard/messages",
+      baseUrl: "/dashboard/chat",
       title: "Messages",
       icon: <BsFillChatDotsFill />,
     },

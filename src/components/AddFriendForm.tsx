@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 // interface AddFriendButtonProps {}
 
 type FormData = z.infer<typeof addFriendValidator>;
+
 const AddFriendForm: React.FC = () => {
   const {
     register,
@@ -28,6 +29,7 @@ const AddFriendForm: React.FC = () => {
       const validatedEmail = addFriendValidator.parse({ email });
       await axios.post("/api/friends/add", {
         email: validatedEmail,
+    
       })
       await toast.success("Friend added")
       
@@ -45,7 +47,7 @@ const AddFriendForm: React.FC = () => {
         return;
       }
 
-      toast.error(`Oops... something went wrong`);
+      toast.error(`Oops... something went wrong` + error);
 
     }
   };

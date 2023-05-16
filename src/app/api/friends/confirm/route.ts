@@ -19,10 +19,12 @@ export async function POST(req: Request) {
 
     const isAlreadyFriends = await fetchRedis(
       "sismember",
-      `user:${session.user.id}:friends`
+      `user:${session.user.id}:friends`,
+      idToAdd
+
     );
 
-    if (!isAlreadyFriends) {
+    if (isAlreadyFriends) {
       return new Response("Already friends!!", { status: 400 });
     }
 
