@@ -28,7 +28,7 @@ const SidebarChatList = ({ friends }: Props) => {
     }
   }, [pathname]);
   return (
-    <ul>
+    <ul className="sticky overflow-y-scroll top-0">
       {friends?.sort().map((friend, i) => (
         <ChatLink
           key={i}

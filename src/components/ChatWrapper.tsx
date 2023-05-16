@@ -7,7 +7,7 @@ interface Props {
 }
 const ChatWrapper = ({ children }:Props) => {
   return (
-    <div className=' min-h-screen p-2'>
+    <div className=' min-h-screen '>
         {children}
     </div>
   )

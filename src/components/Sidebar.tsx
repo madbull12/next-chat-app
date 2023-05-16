@@ -50,7 +50,7 @@ const Sidebar: React.FC<{ unseenRequest: number }> = ({ unseenRequest }) => {
     },
   ];
   return (
-    <div className="px-4 min-h-screen  absolute left-0 top-0  max-w-[250px] border-r ">
+    <div className="px-4 min-h-screen  fixed left-0 top-0  max-w-[250px] border-r ">
       <div>
         <Logo fontSize="text-3xl" />
       </div>

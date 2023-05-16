@@ -18,7 +18,7 @@ export default async function ChatLayout({ children }: LayoutProps) {
   return (
     <Body>
       <div className="flex ">
-        <div className=" border-r flex-[0.3] p-2 min-h-screen ">
+        <div className=" border-r flex-[0.3] p-2 min-h-screen  ">
           <h1 className="text-2xl px-4 font-semibold">Chats</h1>
           <SidebarChatList friends={friends} />
         </div>

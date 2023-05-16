@@ -17,6 +17,7 @@ const ChatLink = ({ user,href }: Props) => {
           <AvatarImage src={user.image as string} height={80} width={80} />
           <AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
         </Avatar>
+        
         <p>{user.name}</p>
       </div>
     </Link>
