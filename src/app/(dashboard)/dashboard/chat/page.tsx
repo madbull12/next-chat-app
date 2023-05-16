@@ -1,4 +1,5 @@
 import Body from '@/components/Body'
+import ChatWrapper from '@/components/ChatWrapper'
 import { Metadata } from 'next'
 import React from 'react'
 
@@ -10,11 +11,9 @@ export const metadata:Metadata = {
 
 const ChatPage = () => {
   return (
-    <Body>
-       
-
-       
-    </Body>
+    <ChatWrapper>
+        
+    </ChatWrapper>
   )
 }
 

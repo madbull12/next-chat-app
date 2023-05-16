@@ -1,8 +1,19 @@
+import ChatWrapper from '@/components/ChatWrapper'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
-const ChatMessagesPage = () => {
+
+interface PageProps {
+    params: {
+      chatId: string
+    }
+  }
+const ChatMessagesPage = ({ params }:PageProps) => {
+
   return (
-    <div>ChatMessagesPage</div>
+    <ChatWrapper>
+        {params.chatId}
+    </ChatWrapper>
   )
 }
 

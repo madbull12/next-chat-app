@@ -17,12 +17,13 @@ export default async function ChatLayout({ children }: LayoutProps) {
 
   return (
     <Body>
-      <div className="max-w-sm border-r p-2 min-h-screen ">
-        <h1 className="text-2xl px-4 font-semibold">Chats</h1>
-        <SidebarChatList friends={friends} />
+      <div className="flex ">
+        <div className=" border-r flex-[0.3] p-2 min-h-screen ">
+          <h1 className="text-2xl px-4 font-semibold">Chats</h1>
+          <SidebarChatList friends={friends} />
+        </div>
+        <div className="flex-[0.7]">{children}</div>
       </div>
-
-      {children}
     </Body>
   );
 }
