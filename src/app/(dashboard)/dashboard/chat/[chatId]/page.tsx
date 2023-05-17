@@ -1,4 +1,6 @@
+import ChatInput from "@/components/ChatInput";
 import ChatWrapper from "@/components/ChatWrapper";
+import Messages from "@/components/Messages";
 import { AvatarImage, Avatar, AvatarFallback } from "@/components/ui/Avatar";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
@@ -64,7 +66,10 @@ const ChatMessagesPage = async ({ params }: PageProps) => {
           <p className="text-sm text-gray-500">{chatPartner.email}</p>
         </div>
       </header>
-   
+      <div className="p-2">
+        {/* <Messages /> */}
+        <ChatInput chatId={chatId} chatPartner={chatPartner} />
+      </div>
     </ChatWrapper>
   );
 };
