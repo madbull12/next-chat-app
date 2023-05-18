@@ -2,11 +2,13 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Button } from "./ui/Button";
 import { toast } from "react-hot-toast";
 import axios, { AxiosError } from "axios";
+import { pusherClient } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 
 interface FriendRequestProps {
   friendRequests: IncomingFriendRequest[];
@@ -19,6 +21,30 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
     useState<IncomingFriendRequest[]>(_friendRequests);
   console.log(_friendRequests);
 
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherKey(`user:${session?.user?.id}:incoming_friend_requests`)
+    )
+    console.log("listening to ", `user:${session?.user?.id}:incoming_friend_requests`)
+
+    const friendRequestHandler = ({ 
+      senderId,
+      senderEmail,
+    }: IncomingFriendRequest) => {
+      console.log("function got called")
+      setFriendRequests((prev) => [...prev, { senderId, senderEmail }])
+    }
+
+    pusherClient.bind('incoming_friend_requests', friendRequestHandler)
+
+    return () => {
+      pusherClient.unsubscribe(
+        toPusherKey(`user:${session?.user?.id}:incoming_friend_requests`)
+      )
+      pusherClient.unbind('incoming_friend_requests', friendRequestHandler)
+    }
+  }, [session?.user.id])
+
   const confirmRequestHandle = async (id: string) => {
     await toast.promise(
       axios.post("/api/friends/confirm", {
@@ -27,7 +53,7 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
       {
         loading: "Adding friend...",
         success: "Friend added",
-        error: (err:AxiosError) => ` ${err.response?.data}`,
+        error: (err: AxiosError) => ` ${err.response?.data}`,
       }
     );
     setFriendRequests((prev) =>

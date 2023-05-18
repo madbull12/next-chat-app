@@ -4,6 +4,7 @@ import Messages from "@/components/Messages";
 import { AvatarImage, Avatar, AvatarFallback } from "@/components/ui/Avatar";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
+import { messageArrayValidator } from "@/lib/validations/message";
 import { getServerSession } from "next-auth";
 import { notFound, useRouter } from "next/navigation";
 import React from "react";
@@ -30,6 +31,27 @@ export async function generateMetadata({ params }: PageProps) {
   return { title: `discu. | ${chatPartner.name} chat` };
 }
 
+async function getChatMessages(chatId: string) {
+  try {
+    const results: string[] = await fetchRedis(
+      'zrange',
+      `chat:${chatId}:messages`,
+      0,
+      -1
+    )
+
+    const dbMessages = results.map((message) => JSON.parse(message) as Message)
+
+    const reversedDbMessages = dbMessages.reverse()
+
+    const messages = messageArrayValidator.parse(reversedDbMessages)
+
+    return messages
+  } catch (error) {
+    notFound()
+  }
+}
+
 const ChatMessagesPage = async ({ params }: PageProps) => {
   const { chatId } = params;
   const session = await getServerSession(authOptions);
@@ -50,6 +72,7 @@ const ChatMessagesPage = async ({ params }: PageProps) => {
     `user:${chatPartnerId}`
   )) as string;
   const chatPartner = JSON.parse(chatPartnerRaw) as User;
+  const initialMessages = await getChatMessages(chatId);
   return (
     <ChatWrapper>
       <header className="flex sticky  top-0 right-0 items-center gap-2 p-2 backdrop-blur-md bg-white/30">
@@ -67,7 +90,7 @@ const ChatMessagesPage = async ({ params }: PageProps) => {
         </div>
       </header>
       <div className="p-2">
-        {/* <Messages /> */}
+        <Messages chatId={chatId} initialMessages={initialMessages} chatPartner={chatPartner} />
         <ChatInput chatId={chatId} chatPartner={chatPartner} />
       </div>
     </ChatWrapper>

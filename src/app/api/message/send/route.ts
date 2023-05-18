@@ -3,7 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 // import { pusherServer } from '@/lib/pusher'
 // import { toPusherKey } from '@/lib/utils'
-// import { Message, messageValidator } from '@/lib/validations/message'
+import { Message, messageValidator } from '@/lib/validations/message'
 import { nanoid } from 'nanoid'
 import { getServerSession } from 'next-auth'
 
@@ -40,14 +40,14 @@ export async function POST(req: Request) {
 
     const timestamp = Date.now()
 
-    // const messageData: Message = {
-    //   id: nanoid(),
-    //   senderId: session.user.id,
-    //   text,
-    //   timestamp,
-    // }
+    const messageData: Message = {
+      id: nanoid(),
+      senderId: session.user.id,
+      text,
+      timestamp,
+    }
 
-    // const message = messageValidator.parse(messageData)
+    const message = messageValidator.parse(messageData)
 
     // // notify all connected chat room clients
     // await pusherServer.trigger(toPusherKey(`chat:${chatId}`), 'incoming-message', message)
@@ -59,10 +59,10 @@ export async function POST(req: Request) {
     // })
 
     // all valid, send the message
-    // await db.zadd(`chat:${chatId}:messages`, {
-    //   score: timestamp,
-    //   member: JSON.stringify(message),
-    // })
+    await db.zadd(`chat:${chatId}:messages`, {
+      score: timestamp,
+      member: JSON.stringify(message),
+    })
 
     return new Response('OK')
   } catch (error) {

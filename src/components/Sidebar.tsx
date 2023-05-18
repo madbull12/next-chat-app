@@ -1,4 +1,6 @@
-import React from "react";
+"use client"
+
+import React, { useEffect, useState } from "react";
 import Logo from "./Logo";
 import Link from "next/link";
 import { RxDashboard } from "react-icons/rx";
@@ -6,15 +8,51 @@ import { BsFillChatDotsFill } from "react-icons/bs";
 import { AiOutlineUser, AiOutlineUserAdd } from "react-icons/ai";
 import { Separator } from "./ui/Separator";
 import ProfileOption from "./ProfileOption";
+import { pusherClient } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 interface LinkProps {
   baseUrl: string;
   title: string;
   icon: any;
 }
 
-const FriendRequestOption: React.FC<{ unseenRequest: number }> = ({
-  unseenRequest,
+const FriendRequestOption: React.FC<{ initialUnseenRequestsCount: number }> = ({
+  initialUnseenRequestsCount,
 }) => {
+  const [unseenRequestCount, setUnseenRequestCount] = useState<number>(
+    initialUnseenRequestsCount
+  )
+
+  const { data:session } = useSession();
+
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherKey(`user:${session?.user.id}:incoming_friend_requests`)
+    )
+    pusherClient.subscribe(toPusherKey(`user:${session?.user.id}:friends`))
+
+    const friendRequestHandler = () => {
+      setUnseenRequestCount((prev) => prev + 1)
+    }
+
+    const addedFriendHandler = () => {
+      setUnseenRequestCount((prev) => prev - 1)
+    }
+
+    pusherClient.bind('incoming_friend_requests', friendRequestHandler)
+    pusherClient.bind('new_friend', addedFriendHandler)
+
+    return () => {
+      pusherClient.unsubscribe(
+        toPusherKey(`user:${session?.user.id}:incoming_friend_requests`)
+      )
+      pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}:friends`))
+
+      pusherClient.unbind('new_friend', addedFriendHandler)
+      pusherClient.unbind('incoming_friend_requests', friendRequestHandler)
+    }
+  }, [session?.user.id])
   return (
     <li className="group hover:bg-accent-primary hover:text-white rounded-lg p-2 relative">
       <Link
@@ -24,7 +62,7 @@ const FriendRequestOption: React.FC<{ unseenRequest: number }> = ({
         <AiOutlineUser />
 
         <span>Friend Requests</span>
-        {unseenRequest > 0 ? <span className="absolute -top-2 -right-2 bg-accent-secondary rounded-full w-4 h-4 text-xs grid place-items-center text-white ">{unseenRequest}</span> : null}
+        {unseenRequestCount > 0 ? <span className="absolute -top-2 -right-2 bg-accent-secondary rounded-full w-4 h-4 text-xs grid place-items-center text-white ">{unseenRequestCount}</span> : null}
         
       </Link>
     </li>
@@ -50,7 +88,7 @@ const Sidebar: React.FC<{ unseenRequest: number }> = ({ unseenRequest }) => {
     },
   ];
   return (
-    <div className="px-4 min-h-screen  fixed left-0 top-0  max-w-[250px] border-r ">
+    <div className="px-4 min-h-screen bg-white fixed left-0 top-0  max-w-[250px] border-r ">
       <div>
         <Logo fontSize="text-3xl" />
       </div>
@@ -68,7 +106,7 @@ const Sidebar: React.FC<{ unseenRequest: number }> = ({ unseenRequest }) => {
             </Link>
           </li>
         ))}
-        <FriendRequestOption unseenRequest={unseenRequest} />
+        <FriendRequestOption initialUnseenRequestsCount={unseenRequest} />
 
         {/* <li>
           <Link href="/messages" className="flex items-center gap-x-8">

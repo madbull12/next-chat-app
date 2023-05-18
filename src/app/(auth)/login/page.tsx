@@ -40,13 +40,9 @@ const LoginPage = () => {
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" onClick={loginWithGoogle}>
+          <Button  variant="outline" onClick={loginWithGoogle}>
             <div className="flex items-center gap-x-2 font-semibold">
-              {isLoading ? (
-                <CgSpinner className="animate-spin" />
-              ) : (
-                <FcGoogle />
-              )}
+        
 
               <span>Continue with google</span>
             </div>
