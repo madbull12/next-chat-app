@@ -75,7 +75,7 @@ const ChatMessagesPage = async ({ params }: PageProps) => {
   const initialMessages = await getChatMessages(chatId);
   return (
     <ChatWrapper>
-      <header className="flex sticky  top-0 right-0 items-center gap-2 p-2 backdrop-blur-md bg-white/30">
+      <header className="flex sticky z-[999] top-0 right-0 items-center gap-2 p-2 backdrop-blur-md bg-white/30">
         <Avatar>
           <AvatarImage
             src={chatPartner.image as string}

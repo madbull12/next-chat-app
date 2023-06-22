@@ -1,6 +1,8 @@
 import Sidebar from '@/components/Sidebar'
+import { getFriendsByUserId } from '@/helpers/getFriendsByUserId'
 import { fetchRedis } from '@/helpers/redis'
 import { authOptions } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/session'
 import { getServerSession } from 'next-auth'
 import React from 'react'
 
@@ -13,22 +15,26 @@ export const metadata = {
   description: 'discu Dashboard',
 }
 const DashboardLayout = async({ children }:LayoutProps) => {
-  const session = await getServerSession(authOptions);
+  const session = await getCurrentUser();
 
   if(!session) return null;
   
   const unseenRequestCount = (
     (await fetchRedis(
       'smembers',
-      `user:${session.user.id}:incoming_friend_requests`
+      `user:${session.id}:incoming_friend_requests`
     )) as User[]
   ).length
+
+  const friends = await getFriendsByUserId(session?.id as string);
+  console.log(friends);
   
   return (
-    <>
-        <Sidebar unseenRequest={unseenRequestCount} />
+    <div className='flex relative w-full'>
+        <Sidebar unseenRequest={unseenRequestCount} session={session as User} friends={friends} />
+        
         {children}
-    </>
+    </div>
   )
 }
 

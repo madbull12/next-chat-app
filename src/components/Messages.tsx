@@ -81,7 +81,7 @@ const Messages: React.FC<MessagesProps> = ({ initialMessages,chatPartner,chatId 
                 </span>
               </div>
               <div
-                className={cn('relative w-6 h-6', {
+                className={cn('relative w-6 h-6 ', {
                   'order-2': isCurrentUser,
                   'order-1': !isCurrentUser,
               
