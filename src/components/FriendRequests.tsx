@@ -24,26 +24,34 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
   useEffect(() => {
     pusherClient.subscribe(
       toPusherKey(`user:${session?.user?.id}:incoming_friend_requests`)
-    )
-    console.log("listening to ", `user:${session?.user?.id}:incoming_friend_requests`)
+    );
+    console.log(
+      "listening to ",
+      `user:${session?.user?.id}:incoming_friend_requests`
+    );
 
-    const friendRequestHandler = ({ 
+    const friendRequestHandler = ({
       senderId,
       senderEmail,
+      senderName,
+      senderImage,
     }: IncomingFriendRequest) => {
-      console.log("function got called")
-      setFriendRequests((prev) => [...prev, { senderId, senderEmail }])
-    }
+      console.log("function got called");
+      setFriendRequests((prev) => [
+        ...prev,
+        { senderId, senderEmail, senderName, senderImage },
+      ]);
+    };
 
-    pusherClient.bind('incoming_friend_requests', friendRequestHandler)
+    pusherClient.bind("incoming_friend_requests", friendRequestHandler);
 
     return () => {
       pusherClient.unsubscribe(
         toPusherKey(`user:${session?.user?.id}:incoming_friend_requests`)
-      )
-      pusherClient.unbind('incoming_friend_requests', friendRequestHandler)
-    }
-  }, [session?.user.id])
+      );
+      pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
+    };
+  }, [session?.user.id]);
 
   const confirmRequestHandle = async (id: string) => {
     await toast.promise(

@@ -23,6 +23,7 @@ const Messages: React.FC<MessagesProps> = ({ initialMessages,chatPartner,chatId 
     )
 
     const messageHandler = (message: Message) => {
+      console.log("bla")
       setMessages((prev) => [message, ...prev])
     }
 
