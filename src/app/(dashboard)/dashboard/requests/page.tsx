@@ -29,7 +29,10 @@ const RequestsPage = async () => {
   console.log(incomingFriendRequests)
   return (
     <Body>
+      <div className="p-4">
       <FriendRequests friendRequests={incomingFriendRequests} />
+
+      </div>
     </Body>
   );
 };

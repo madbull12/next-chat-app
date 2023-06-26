@@ -5,7 +5,7 @@ interface BodyProps {
 }
 const Body: React.FC<BodyProps> = ({ children }) => {
   return (
-    <div className="min-h-screen ml-[240px]  mr-0 ">
+    <div className="min-h-screen ml-[25%] mr-0 ">
         {children}
     </div>
   );
