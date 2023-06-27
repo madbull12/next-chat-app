@@ -69,10 +69,26 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
     );
   };
 
+  const ignoreRequestHandle = async (id: string) => {
+    await toast.promise(
+      axios.post("/api/friends/ignore", {
+        id,
+      }),
+      {
+        loading: "Removing friend's request...",
+        success: "Request removed",
+        error: (err: AxiosError) => ` ${err.response?.data}`,
+      }
+    );
+    setFriendRequests((prev) =>
+      prev.filter((request) => request.senderId !== id)
+    );
+  };
+
   return (
     <>
       {friendRequests.length === 0 ? (
-        <div className="flex items-center flex-col">
+        <div className="flex items-center  w-full flex-col">
           <Image
             width={250}
             height={250}
@@ -83,7 +99,7 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
           <p>Friend requests will appear here</p>
         </div>
       ) : (
-        <>
+        <div className="">
           <p className="text-xl font-bold">Friend requests</p>
           <div className="mt-4 space-y-4">
             {friendRequests?.map((request) => (
@@ -108,13 +124,13 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
                     >
                       Confirm
                     </Button>
-                    <Button variant={"outline"}>Delete</Button>
+                    <Button variant={"outline"} onClick={()=>ignoreRequestHandle(request.senderId)}>Delete</Button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
     </>
   );

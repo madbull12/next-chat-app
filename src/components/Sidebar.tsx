@@ -102,7 +102,7 @@ const Sidebar: React.FC<{ unseenRequest: number; session: User,friends:User[] }>
         </div>
        
       </div>
-      <SidebarChatList friends={friends} />
+      <SidebarChatList friends={friends} sessionId={session.id} />
 
 
       {/* <ul className="list-none py-4 text-xl flex-col flex h-full ">
