@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import axios, { AxiosError } from "axios";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
+import { Skeleton } from "./ui/Skeleton";
 
 interface FriendRequestProps {
   friendRequests: IncomingFriendRequest[];
@@ -111,7 +112,8 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
                     width={80}
                   />
                   <AvatarFallback>
-                    {request.senderEmail?.slice(0, 1)}
+                  <Skeleton className="w-[80px] h-[80px] rounded-full border-gray-200 " />
+
                   </AvatarFallback>
                 </Avatar>
                 <div>
