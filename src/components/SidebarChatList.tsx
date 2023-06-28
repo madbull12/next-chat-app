@@ -8,6 +8,8 @@ import { useSession } from "next-auth/react";
 import { pusherClient } from "@/lib/pusher";
 import { toast } from "react-hot-toast";
 import UnseenChatToast from "./UnseenChatToast";
+import Link from "next/link";
+import { Button } from "./ui/Button";
 
 interface Props {
   friends: User[];
@@ -21,14 +23,14 @@ interface ExtendedMessage extends Message {
 const SidebarChatList = ({ friends,sessionId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
-  const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
+  // const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
   const [activeChats, setActiveChats] = useState<User[]>(friends);
   useEffect(() => {
-    if (pathname?.includes("chat")) {
-      setUnseenMessages((prev) => {
-        return prev.filter((msg) => !pathname.includes(msg.senderId));
-      });
-    }
+    // if (pathname?.includes("chat")) {
+    //   setUnseenMessages((prev) => {
+    //     return prev.filter((msg) => !pathname.includes(msg.senderId));
+    //   });
+    // }
 
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`));
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
@@ -53,7 +55,7 @@ const SidebarChatList = ({ friends,sessionId }: Props) => {
       ))
 
       
-      setUnseenMessages((prev) => [...prev, message])
+      // setUnseenMessages((prev) => [...prev, message])
     }
 
     pusherClient.bind("new_message",chatHandler);
@@ -70,8 +72,21 @@ const SidebarChatList = ({ friends,sessionId }: Props) => {
 
 
   }, [pathname]);
+  if(friends.length === 0) {
+    return (
+      <div className="p-2 flex flex-col gap-y-2 items-center">
+        <p className="text-lg font-bold">Oops... You have no friends </p>
+        <img src="/no-friends.svg" className="min-w-[50%]" />
+        <p className="text-lg font-bold">You can look for friends here </p>
+        <Button className="bg-accent-primary hover:bg-accent-secondary">
+          Add friends
+        </Button>
+      </div>
+    )
+  }
   return (
     <ul className="sticky overflow-y-scroll top-0">
+
       {friends?.sort().map((friend, i) => (
         <ChatLink
           key={i}
