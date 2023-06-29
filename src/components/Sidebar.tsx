@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Skeleton } from "./ui/Skeleton";
 import { Input } from "./ui/Input";
 import { FaSearch } from "react-icons/fa";
-import { BsFilter } from 'react-icons/bs'
+import { BsFillChatDotsFill, BsFilter } from 'react-icons/bs'
 import SidebarChatList from "./SidebarChatList";
 
 const FriendRequestOption: React.FC<{ initialUnseenRequestsCount: number }> = ({
@@ -87,6 +87,7 @@ const Sidebar: React.FC<{ unseenRequest: number; session: User,friends:User[] }>
               <Skeleton className="w-[40px] h-[40px] rounded-full bg-gray-100" />
             </AvatarFallback>
           </Avatar>
+          <BsFillChatDotsFill className="text-xl cursor-pointer" />
         </div>
         <div className="flex w-full max-w-sm items-center space-x-2 ">
           <div className="border border-input w-full rounded-lg flex items-center px-2">

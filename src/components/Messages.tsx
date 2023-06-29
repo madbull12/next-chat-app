@@ -66,7 +66,7 @@ const Messages: React.FC<MessagesProps> = ({ initialMessages,chatPartner,chatId 
               >
                 <span
                   className={cn("px-4 py-2 rounded-lg inline-block", {
-                    "bg-indigo-600 text-white": isCurrentUser,
+                    "bg-accent-primary text-white": isCurrentUser,
                     "bg-gray-200 text-gray-900": !isCurrentUser,
                     "rounded-br-none":
                       !hasNextMessageFromSameUser && isCurrentUser,
@@ -75,7 +75,9 @@ const Messages: React.FC<MessagesProps> = ({ initialMessages,chatPartner,chatId 
                   })}
                 >
                   {message.text}{" "}
-                  <span className="ml-2 text-xs text-gray-400">
+                  <span className={cn("ml-2 text-[10px] text-gray-100",{
+                    "text-gray-400 " : !isCurrentUser,
+                  })}>
                     {formatTimestamp(message.timestamp)}
                   </span>
                 </span>

@@ -79,7 +79,8 @@ const SidebarChatList = ({ friends,sessionId }: Props) => {
         <img src="/no-friends.svg" className="min-w-[50%]" />
         <p className="text-lg font-bold">You can look for friends here </p>
         <Button className="bg-accent-primary hover:bg-accent-secondary">
-          Add friends
+          <Link href="/dashboard/add-friends">Add friends</Link>
+          
         </Button>
       </div>
     )
