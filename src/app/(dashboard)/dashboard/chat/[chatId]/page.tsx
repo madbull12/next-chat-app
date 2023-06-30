@@ -4,10 +4,11 @@ import Messages from "@/components/Messages";
 import { AvatarImage, Avatar, AvatarFallback } from "@/components/ui/Avatar";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/session";
 import { messageArrayValidator } from "@/lib/validations/message";
 import { getServerSession } from "next-auth";
 import { notFound, useRouter } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 interface PageProps {
   params: {
@@ -16,10 +17,10 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const session = await getServerSession(authOptions);
-  if (!session) notFound();
+  const user = await getCurrentUser()
+  if (!user) notFound();
   const [userId1, userId2] = params.chatId.split("--");
-  const { user } = session;
+
 
   const chatPartnerId = user.id === userId1 ? userId2 : userId1;
   const chatPartnerRaw = (await fetchRedis(
@@ -54,9 +55,8 @@ async function getChatMessages(chatId: string) {
 
 const ChatMessagesPage = async ({ params }: PageProps) => {
   const { chatId } = params;
-  const session = await getServerSession(authOptions);
-  if (!session) notFound();
-  const { user } = session;
+  const user = await getCurrentUser()
+  if (!user) notFound();
 
   const [userId1, userId2] = chatId.split("--");
 
@@ -90,7 +90,8 @@ const ChatMessagesPage = async ({ params }: PageProps) => {
         </div>
       </header>
       <div className="p-2">
-        <Messages chatId={chatId} initialMessages={initialMessages} chatPartner={chatPartner} />
+          <Messages chatId={chatId} initialMessages={initialMessages} chatPartner={chatPartner} user={user as User} />
+
         <ChatInput chatId={chatId} chatPartner={chatPartner} />
       </div>
     </ChatWrapper>

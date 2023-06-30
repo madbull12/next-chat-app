@@ -23,7 +23,7 @@ interface ExtendedMessage extends Message {
 const SidebarChatList = ({ friends,sessionId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
-  // const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
+  const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
   const [activeChats, setActiveChats] = useState<User[]>(friends);
   useEffect(() => {
     // if (pathname?.includes("chat")) {
@@ -43,6 +43,8 @@ const SidebarChatList = ({ friends,sessionId }: Props) => {
       const shouldNotify = pathname !== `/dashboard/chat/${chatHrefConstructor(sessionId,message.senderId)}`
       if(!shouldNotify) return;
 
+      const audio = new Audio('/audio/notification-sound.wav');
+      audio.play()
       toast.custom((t)=>(
         <UnseenChatToast
           t={t}
@@ -55,7 +57,7 @@ const SidebarChatList = ({ friends,sessionId }: Props) => {
       ))
 
       
-      // setUnseenMessages((prev) => [...prev, message])
+      setUnseenMessages((prev) => [...prev, message])
     }
 
     pusherClient.bind("new_message",chatHandler);
