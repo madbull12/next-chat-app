@@ -15,6 +15,7 @@ import { Input } from "./ui/Input";
 import { FaSearch } from "react-icons/fa";
 import { BsFillChatDotsFill, BsFilter } from 'react-icons/bs'
 import SidebarChatList from "./SidebarChatList";
+import ChatMenu from "./ChatMenu";
 
 const FriendRequestOption: React.FC<{ initialUnseenRequestsCount: number }> = ({
   initialUnseenRequestsCount,
@@ -87,7 +88,7 @@ const Sidebar: React.FC<{ unseenRequest: number; session: User,friends:User[] }>
               <Skeleton className="w-[40px] h-[40px] rounded-full bg-gray-100" />
             </AvatarFallback>
           </Avatar>
-          <BsFillChatDotsFill className="text-xl cursor-pointer" />
+          <ChatMenu unseenRequests={unseenRequest} user={session} />
         </div>
         <div className="flex w-full max-w-sm items-center space-x-2 ">
           <div className="border border-input w-full rounded-lg flex items-center px-2">

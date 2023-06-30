@@ -41,7 +41,7 @@ const LoginPage = () => {
         </CardHeader>
         <CardContent>
           <Button isLoading={isLoading}  variant="outline" onClick={loginWithGoogle} className="flex items-center gap-x-2 font-semibold">
-              {isLoading ? <FcGoogle /> : null}
+              {!isLoading ? <FcGoogle /> : null}
               
 
               <span>Continue with google</span>

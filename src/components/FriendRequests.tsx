@@ -122,7 +122,6 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
                   <div className="flex items-center gap-x-2 mt-2">
                     <Button
                       onClick={() => confirmRequestHandle(request.senderId)}
-                      className="bg-accent-primary hover:bg-accent-secondary"
                     >
                       Confirm
                     </Button>

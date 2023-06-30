@@ -27,8 +27,9 @@ const Messages: React.FC<MessagesProps> = ({
 
     const messageHandler = (message: Message) => {
       console.log("bla");
-
-      setMessages((prev) => [message, ...prev]);
+      const audio = new Audio('/audio/message-pop.mp3');
+      audio.play()
+      setMessages((prev) => [...prev,message]);
     };
 
     pusherClient.bind("incoming-message", messageHandler);
@@ -68,7 +69,7 @@ const Messages: React.FC<MessagesProps> = ({
                 >
                   <span
                     className={cn("px-4 py-2 rounded-lg inline-block", {
-                      "bg-accent-primary text-white": isCurrentUser,
+                      "bg-accentPrimary text-white": isCurrentUser,
                       "bg-gray-200 text-gray-900": !isCurrentUser,
                       "rounded-br-none":
                         !hasNextMessageFromSameUser && isCurrentUser,
