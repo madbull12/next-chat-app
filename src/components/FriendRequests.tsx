@@ -10,6 +10,7 @@ import axios, { AxiosError } from "axios";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 import { Skeleton } from "./ui/Skeleton";
+import RequestToast from "./RequestToast";
 
 interface FriendRequestProps {
   friendRequests: IncomingFriendRequest[];
@@ -37,11 +38,21 @@ const FriendRequests: React.FC<FriendRequestProps> = ({
       senderName,
       senderImage,
     }: IncomingFriendRequest) => {
-      console.log("function got called");
+      console.log(senderId,"function got called",senderImage,senderName);
       setFriendRequests((prev) => [
         ...prev,
-        { senderId, senderEmail, senderName, senderImage },
+        { senderId, senderName, senderImage,senderEmail },
       ]);
+      // const audio = new Audio('/audio/notification-sound.wav');
+
+      // audio.play();
+      // toast.custom((t)=>(
+      //   <RequestToast
+      //     t={t}
+      //     senderImg={senderImage}
+      //     senderName={senderName}
+      //   />
+      // ))
     };
 
     pusherClient.bind("incoming_friend_requests", friendRequestHandler);

@@ -69,7 +69,7 @@ const FriendRequestOption: React.FC<{ initialUnseenRequestsCount: number }> = ({
   );
 };
 
-const Sidebar: React.FC<{ unseenRequest: number; session: User,friends:User[] }> = ({
+const Sidebar: React.FC<{ unseenRequest: IncomingFriendRequest[]; session: User,friends:User[] }> = ({
   unseenRequest,
   session,
   friends

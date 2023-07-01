@@ -13,12 +13,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-const ChatMenu = ({ unseenRequests,user }:{ unseenRequests:number,user:User } ) => {
-  const [initialUnseenRequests,setInitialUnseenRequests] = useState<number>(unseenRequests);
+import { toast } from "react-hot-toast";
+import RequestToast from "./RequestToast";
+interface ChatMenuProps {
+  unseenRequests: IncomingFriendRequest[];
+  user:User;
+}
+const ChatMenu = ({ unseenRequests,user }:ChatMenuProps ) => {
+  const [initialUnseenRequests,setInitialUnseenRequests] = useState<IncomingFriendRequest[]>(unseenRequests);
+  const [unseenRequestsCount,setUnseenRequestsCount] = useState<number>(unseenRequests.length);
+
   const pathname = usePathname()
   useEffect(()=>{
     if(pathname === "/dashboard/requests") {
-      setInitialUnseenRequests(0)
+      setUnseenRequestsCount(0)
     }
 
       pusherClient.subscribe(
@@ -27,11 +35,21 @@ const ChatMenu = ({ unseenRequests,user }:{ unseenRequests:number,user:User } ) 
       pusherClient.subscribe(toPusherKey(`user:${user.id}:friends`));
   
       const friendRequestHandler = () => {
-        setInitialUnseenRequests((prev) => prev + 1);
+        setUnseenRequestsCount((prev) => prev + 1);
+        // const audio = new Audio('/audio/notification-sound.wav');
+
+        // audio.play();
+        // toast.custom((t)=>(
+        //   <RequestToast
+        //     t={t}
+        //     senderImg={senderImage}
+        //     senderName={senderName}
+        //   />
+        // ))
       };
   
       const addedFriendHandler = () => {
-        setInitialUnseenRequests((prev) => prev - 1);
+        setUnseenRequestsCount((prev) => prev - 1);
       };
   
       pusherClient.bind("incoming_friend_requests", friendRequestHandler);
@@ -59,8 +77,8 @@ const ChatMenu = ({ unseenRequests,user }:{ unseenRequests:number,user:User } ) 
           <DropdownMenuItem className="space-x-2 relative  cursor-pointer hover:bg-slate-200">
             <FaUserFriends />
             <Link href="/dashboard/requests">Friend Requests</Link>
-            {initialUnseenRequests !== 0 ?   <div className="w-4 absolute top-0 text-xs place-items-center grid right-0 h-4 rounded-full text-white bg-accentPrimary">
-              {initialUnseenRequests}
+            {unseenRequestsCount !== 0 ?   <div className="w-4 absolute top-0 text-xs place-items-center grid right-0 h-4 rounded-full text-white bg-accentPrimary">
+              {unseenRequestsCount}
             </div> : null}
           
           </DropdownMenuItem>
