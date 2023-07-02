@@ -63,6 +63,8 @@ export async function POST(req: Request) {
       {
         senderId: session.user.id,
         senderEmail: session.user.email,
+        senderImage:session.user.image,
+        senderName:session.user.name
       }
     )
 

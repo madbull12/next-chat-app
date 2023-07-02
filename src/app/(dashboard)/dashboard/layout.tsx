@@ -26,7 +26,7 @@ const DashboardLayout = async({ children }:LayoutProps) => {
   console.log('friends', friends)
   return (
     <div className='flex relative w-full'>
-        <Sidebar unseenRequest={incomingFriendRequests as IncomingFriendRequest[]} session={session as User} friends={friends} />
+        <Sidebar unseenRequests={incomingFriendRequests as IncomingFriendRequest[]} session={session as User} friends={friends} />
         
         {children}
     </div>

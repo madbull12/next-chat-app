@@ -16,55 +16,10 @@ import { toPusherKey } from "@/lib/utils";
 import { toast } from "react-hot-toast";
 import RequestToast from "./RequestToast";
 interface ChatMenuProps {
-  unseenRequests: IncomingFriendRequest[];
-  user:User;
+  unseenRequestsCount:number;
 }
-const ChatMenu = ({ unseenRequests,user }:ChatMenuProps ) => {
-  const [initialUnseenRequests,setInitialUnseenRequests] = useState<IncomingFriendRequest[]>(unseenRequests);
-  const [unseenRequestsCount,setUnseenRequestsCount] = useState<number>(unseenRequests.length);
+const ChatMenu = ({ unseenRequestsCount }:ChatMenuProps ) => {
 
-  const pathname = usePathname()
-  useEffect(()=>{
-    if(pathname === "/dashboard/requests") {
-      setUnseenRequestsCount(0)
-    }
-
-      pusherClient.subscribe(
-        toPusherKey(`user:${user.id}:incoming_friend_requests`)
-      );
-      pusherClient.subscribe(toPusherKey(`user:${user.id}:friends`));
-  
-      const friendRequestHandler = () => {
-        setUnseenRequestsCount((prev) => prev + 1);
-        // const audio = new Audio('/audio/notification-sound.wav');
-
-        // audio.play();
-        // toast.custom((t)=>(
-        //   <RequestToast
-        //     t={t}
-        //     senderImg={senderImage}
-        //     senderName={senderName}
-        //   />
-        // ))
-      };
-  
-      const addedFriendHandler = () => {
-        setUnseenRequestsCount((prev) => prev - 1);
-      };
-  
-      pusherClient.bind("incoming_friend_requests", friendRequestHandler);
-      pusherClient.bind("new_friend", addedFriendHandler);
-  
-      return () => {
-        pusherClient.unsubscribe(
-          toPusherKey(`user:${user.id}:incoming_friend_requests`)
-        );
-        pusherClient.unsubscribe(toPusherKey(`user:${user.id}:friends`));
-  
-        pusherClient.unbind("new_friend", addedFriendHandler);
-        pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
-      };
-  },[pathname,user.id])
   return (
     <div className="z-[999]">
       <DropdownMenu>

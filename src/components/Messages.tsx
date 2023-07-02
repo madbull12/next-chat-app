@@ -26,7 +26,6 @@ const Messages: React.FC<MessagesProps> = ({
     pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
 
     const messageHandler = (message: Message) => {
-      console.log("bla");
       const audio = new Audio('/audio/message-pop.mp3');
       audio.play()
       setMessages((prev) => [...prev,message]);
