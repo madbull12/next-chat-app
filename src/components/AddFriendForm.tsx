@@ -66,12 +66,11 @@ const AddFriendForm: React.FC = () => {
           {...register("email")}
           type="email"
           placeholder="Email"
-          className="ring-accent-secondary"
         />
         <Button
           type="submit"
           disabled={watch("email") === ""}
-          className="bg-accent-primary whitespace-nowrap hover:bg-accent-secondary"
+          className=" whitespace-nowrap "
         >
           Add friend
         </Button>

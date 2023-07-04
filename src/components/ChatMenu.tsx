@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,13 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { BsFillChatDotsFill } from "react-icons/bs";
-import { FaUserFriends } from "react-icons/fa";
+import { FaUserFriends, FaUserPlus } from "react-icons/fa";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { pusherClient } from "@/lib/pusher";
-import { toPusherKey } from "@/lib/utils";
-import { toast } from "react-hot-toast";
-import RequestToast from "./RequestToast";
+
 interface ChatMenuProps {
   unseenRequestsCount:number;
 }
@@ -35,6 +31,13 @@ const ChatMenu = ({ unseenRequestsCount }:ChatMenuProps ) => {
             {unseenRequestsCount !== 0 ?   <div className="w-4 absolute top-0 text-xs place-items-center grid right-0 h-4 rounded-full text-white bg-accentPrimary">
               {unseenRequestsCount}
             </div> : null}
+          
+          </DropdownMenuItem>
+          <DropdownMenuItem className="space-x-2 relative  cursor-pointer hover:bg-slate-200">
+            <FaUserPlus />
+            <Link href="/dashboard/add-friends">Add friends</Link>
+
+         
           
           </DropdownMenuItem>
         </DropdownMenuContent>
