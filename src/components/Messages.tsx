@@ -20,7 +20,7 @@ const Messages: React.FC<MessagesProps> = ({
   chatId,
   user,
 }) => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[] & { date?:Date }>(initialMessages);
   
 
 
@@ -50,10 +50,21 @@ const Messages: React.FC<MessagesProps> = ({
         {messages.map((message, i) => {
           const isCurrentUser = message.senderId === user.id;
           console.log(messages);
-          const arrangedMessagesByDay = messages.filter((m,i)=>{
-            if(messages.length === i + 1) return;
-            return format(m.timestamp,"yy:MM:dd") === format(messages[i + 1]?.timestamp,"yy:MM:dd")
-          });
+
+          // const mappedMessages = messages.map((message)=>({...message,date:format(message.timestamp,"dd/MM/yyyy")})) 
+          
+          const arrangedMessagesByDay = messages.reduce((result,message)=>{
+            const existingGroup = result.find(group => group[0].date === message.date);
+
+            if (existingGroup) {
+              existingGroup.push({ ...message, date: undefined });
+            } else {
+              result.push([{ ...message, date: undefined }]);
+            }
+          
+            return result;
+          },[])
+     
           console.log(arrangedMessagesByDay)
           // const isTheSameDay = format(message.timestamp,"yy-MM-dd") === format(messages[i + 1]?.timestamp,"yy-MM-dd");
           // console.log(isTheSameDay)
