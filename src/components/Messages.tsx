@@ -21,6 +21,8 @@ const Messages: React.FC<MessagesProps> = ({
   user,
 }) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  
+
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
@@ -47,9 +49,16 @@ const Messages: React.FC<MessagesProps> = ({
     <div>
         {messages.map((message, i) => {
           const isCurrentUser = message.senderId === user.id;
-
+          console.log(messages);
+          const arrangedMessagesByDay = messages.filter((m,i)=>{
+            if(messages.length === i + 1) return;
+            return format(m.timestamp,"yy:MM:dd") === format(messages[i + 1]?.timestamp,"yy:MM:dd")
+          });
+          console.log(arrangedMessagesByDay)
+          // const isTheSameDay = format(message.timestamp,"yy-MM-dd") === format(messages[i + 1]?.timestamp,"yy-MM-dd");
+          // console.log(isTheSameDay)
           const hasNextMessageFromSameUser =
-            messages[i - 1]?.senderId === messages[i].senderId;
+            messages[i + 1]?.senderId === messages[i].senderId;
           return (
             <div className="p-4">
               <div
