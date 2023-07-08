@@ -14,23 +14,25 @@ interface MessagesProps {
   user: User;
 }
 
+
+
 const Messages: React.FC<MessagesProps> = ({
   initialMessages,
   chatPartner,
   chatId,
   user,
 }) => {
-  const [messages, setMessages] = useState<Message[] & { date?:Date }>(initialMessages);
-  
-
+  const [messages, setMessages] = useState<Message[]>(
+    initialMessages
+  );
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
 
     const messageHandler = (message: Message) => {
-      const audio = new Audio('/audio/message-pop.mp3');
-      audio.play()
-      setMessages((prev) => [...prev,message]);
+      const audio = new Audio("/audio/message-pop.mp3");
+      audio.play();
+      setMessages((prev) => [...prev, message]);
     };
 
     pusherClient.bind("incoming-message", messageHandler);
@@ -45,89 +47,89 @@ const Messages: React.FC<MessagesProps> = ({
     return format(timestamp, "HH:mm");
   };
 
+  const mappedMessages = messages.map((message) => ({
+    date: format(message.timestamp, "dd/MM/yyyy"),
+    messages:message
+  }));
+
+  console.log(mappedMessages)
+
+  
+  // const arrangedMessagesByDay = messages?.reduce((result, message) => {
+  //   console.log(result,message)
+  // }, []);
+
+  // console.log(arrangedMessagesByDay)
+
   return (
     <div>
-        {messages.map((message, i) => {
-          const isCurrentUser = message.senderId === user.id;
-          console.log(messages);
+      {messages.map((message, i) => {
+        const isCurrentUser = message.senderId === user.id;
 
-          // const mappedMessages = messages.map((message)=>({...message,date:format(message.timestamp,"dd/MM/yyyy")})) 
-          
-          const arrangedMessagesByDay = messages.reduce((result,message)=>{
-            const existingGroup = result.find(group => group[0].date === message.date);
 
-            if (existingGroup) {
-              existingGroup.push({ ...message, date: undefined });
-            } else {
-              result.push([{ ...message, date: undefined }]);
-            }
-          
-            return result;
-          },[])
-     
-          console.log(arrangedMessagesByDay)
-          // const isTheSameDay = format(message.timestamp,"yy-MM-dd") === format(messages[i + 1]?.timestamp,"yy-MM-dd");
-          // console.log(isTheSameDay)
-          const hasNextMessageFromSameUser =
-            messages[i + 1]?.senderId === messages[i].senderId;
-          return (
-            <div className="p-4">
+        // console.log(arrangedMessagesByDay);
+        // const isTheSameDay = format(message.timestamp,"yy-MM-dd") === format(messages[i + 1]?.timestamp,"yy-MM-dd");
+        // console.log(isTheSameDay)
+        const hasNextMessageFromSameUser =
+          messages[i + 1]?.senderId === messages[i].senderId;
+        return (
+          <div className="p-4">
+            <div
+              className={cn("flex items-end", {
+                "justify-end": isCurrentUser,
+              })}
+            >
               <div
-                className={cn("flex items-end", {
-                  "justify-end": isCurrentUser,
-                })}
+                className={cn(
+                  "flex flex-col space-y-2 max-w-xs mx-2 text-base   ",
+                  {
+                    "order-1 items-end": isCurrentUser,
+                    "order-2 items-start": !isCurrentUser,
+                  }
+                )}
               >
-                <div
-                  className={cn(
-                    "flex flex-col space-y-2 max-w-xs mx-2 text-base   ",
-                    {
-                      "order-1 items-end": isCurrentUser,
-                      "order-2 items-start": !isCurrentUser,
-                    }
-                  )}
-                >
-                  <span
-                    className={cn("px-4 py-2 rounded-lg inline-block", {
-                      "bg-accentPrimary text-white": isCurrentUser,
-                      "bg-gray-200 text-gray-900": !isCurrentUser,
-                      "rounded-br-none":
-                        !hasNextMessageFromSameUser && isCurrentUser,
-                      "rounded-bl-none":
-                        !hasNextMessageFromSameUser && !isCurrentUser,
-                    })}
-                  >
-                    {message.text}{" "}
-                    <span
-                      className={cn("ml-2 text-[10px] text-gray-100", {
-                        "text-gray-400 ": !isCurrentUser,
-                      })}
-                    >
-                      {formatTimestamp(message.timestamp)}
-                    </span>
-                  </span>
-                </div>
-                <div
-                  className={cn("relative w-6 h-6 ", {
-                    "order-2": isCurrentUser,
-                    "order-1": !isCurrentUser,
-
-                    invisible: hasNextMessageFromSameUser,
+                <span
+                  className={cn("px-4 py-2 rounded-lg inline-block", {
+                    "bg-accentPrimary text-white": isCurrentUser,
+                    "bg-gray-200 text-gray-900": !isCurrentUser,
+                    "rounded-br-none":
+                      !hasNextMessageFromSameUser && isCurrentUser,
+                    "rounded-bl-none":
+                      !hasNextMessageFromSameUser && !isCurrentUser,
                   })}
                 >
-                  <Image
-                    fill
-                    src={
-                      isCurrentUser ? (user.image as string) : chatPartner.image
-                    }
-                    alt="Profile picture"
-                    referrerPolicy="no-referrer"
-                    className="rounded-full"
-                  />
-                </div>
+                  {message.text}{" "}
+                  <span
+                    className={cn("ml-2 text-[10px] text-gray-100", {
+                      "text-gray-400 ": !isCurrentUser,
+                    })}
+                  >
+                    {formatTimestamp(message.timestamp)}
+                  </span>
+                </span>
+              </div>
+              <div
+                className={cn("relative w-6 h-6 ", {
+                  "order-2": isCurrentUser,
+                  "order-1": !isCurrentUser,
+
+                  invisible: hasNextMessageFromSameUser,
+                })}
+              >
+                <Image
+                  fill
+                  src={
+                    isCurrentUser ? (user.image as string) : chatPartner.image
+                  }
+                  alt="Profile picture"
+                  referrerPolicy="no-referrer"
+                  className="rounded-full"
+                />
               </div>
             </div>
-          );
-        })}
+          </div>
+        );
+      })}
     </div>
   );
 };
