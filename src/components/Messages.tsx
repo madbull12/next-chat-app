@@ -53,7 +53,7 @@ const Messages: React.FC<MessagesProps> = ({
   const mappedMessages = messages.map((message)=> {
     return {
       date: format(message.timestamp, "dd/MM/yyyy"),
-      messages:message
+      ...message
     }
   });
 
