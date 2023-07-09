@@ -14,6 +14,9 @@ interface MessagesProps {
   user: User;
 }
 
+interface ExtendedMessage extends Message {
+  date:string;
+}
 
 
 const Messages: React.FC<MessagesProps> = ({
@@ -50,18 +53,26 @@ const Messages: React.FC<MessagesProps> = ({
   const mappedMessages = messages.map((message)=> {
     return {
       date: format(message.timestamp, "dd/MM/yyyy"),
-      messages:[]
+      messages:message
     }
   });
 
-  console.log(mappedMessages)
+  // console.log(mappedMessages)
 
   
-  // const arrangedMessagesByDay = messages?.reduce((result, message) => {
-  //   console.log(result,message)
-  // }, []);
+  const arrangedMessagesByDay = mappedMessages?.reduce((acc,cur,i)=>{
+    const existingGroup = acc.find(group => group.date === cur.date);
+    console.log(cur)
+    if (existingGroup) {
+      existingGroup.messages.push(cur);
+    } else {
+      acc.push({ date: cur.date, messages: [cur] as Message[]  });
+    }
 
-  // console.log(arrangedMessagesByDay)
+    return acc;
+  },[] as { date:string;messages:Message[] }[])
+
+  console.log(arrangedMessagesByDay)
 
   return (
     <div>
