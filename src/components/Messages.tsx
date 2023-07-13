@@ -14,29 +14,25 @@ interface MessagesProps {
   user: User;
 }
 
-const MessagesDate = ({ date }:{ date:string }) => {
-  const timestamp = Date.now()
-  const today = chatDateFormat(timestamp)
-  const yesterday = chatDateFormat(timestamp - 24*60*60*1000) ;
-  
-  const getDisplayDate = () => {
-    if(today===date) return "Today";
-    if(yesterday===date) return "Yesterday";
-    return date;
-  }
+const MessagesDate = ({ date }: { date: string }) => {
+  const timestamp = Date.now();
+  const today = chatDateFormat(timestamp);
+  const yesterday = chatDateFormat(timestamp - 24 * 60 * 60 * 1000);
 
+  const getDisplayDate = () => {
+    if (today === date) return "Today";
+    if (yesterday === date) return "Yesterday";
+    return date;
+  };
 
   return (
     <div className="w-full flex justify-center">
-    <div className="p-2 w-[100px] grid place-items-center rounded-lg bg-slate-200 text-slate-400 text-xs ">
-    {getDisplayDate()}
+      <div className="p-2 w-[100px] grid place-items-center rounded-lg bg-slate-200 text-slate-500 text-xs ">
+        {getDisplayDate()}
+      </div>
     </div>
-    </div>
-
-
-  )
-}
-
+  );
+};
 
 const Messages: React.FC<MessagesProps> = ({
   initialMessages,
@@ -93,7 +89,6 @@ const Messages: React.FC<MessagesProps> = ({
   return (
     <div>
       {arrangedMessagesByDay?.map((message) => (
-        
         <>
           <MessagesDate date={message.date} />
           {message.messages.map((message, i) => {
