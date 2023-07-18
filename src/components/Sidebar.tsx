@@ -1,46 +1,103 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Logo from "./Logo";
-import Link from "next/link";
 
-import { AiOutlineUser, AiOutlineUserAdd } from "react-icons/ai";
 import { Separator } from "./ui/Separator";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Skeleton } from "./ui/Skeleton";
 import { Input } from "./ui/Input";
 import { FaSearch } from "react-icons/fa";
-import { BsFillChatDotsFill, BsFilter } from 'react-icons/bs'
+import { BsFilter } from "react-icons/bs";
 import SidebarChatList from "./SidebarChatList";
 import ChatMenu from "./ChatMenu";
 import { usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 import RequestToast from "./RequestToast";
+import { useDebounce } from "@/hooks/useDebounce";
 
-const FriendRequestOption: React.FC<{ initialUnseenRequestsCount: number }> = ({
-  initialUnseenRequestsCount,
+interface SearchFriendsProps {
+  value: string;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+const SearchFriendsInput: React.FC<SearchFriendsProps> = ({
+  value,
+  handleChange,
 }) => {
-  const [unseenRequestCount, setUnseenRequestCount] = useState<number>(
-    initialUnseenRequestsCount
+  return (
+    <div className="border border-input w-full rounded-lg flex items-center px-2">
+      <FaSearch className="text-gray-500" />
+
+      <Input
+        value={value}
+        type="text"
+        placeholder="Search or start a new chat"
+        className="border-none"
+        onChange={handleChange}
+      />
+    </div>
+  );
+};
+
+const Sidebar: React.FC<{
+  unseenRequests: IncomingFriendRequest[];
+  session: User;
+  friends: User[];
+}> = ({ unseenRequests, session, friends }) => {
+  const [searchValue, setSearchValue] = useState<string>("");
+
+  const [filteredFriends, setFilteredFriends] = useState<User[]>(friends);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const debouncedValue = useDebounce<string>(searchValue, 500);
+  const [unseenRequestsCount, setUnseenRequestsCount] = useState<number>(
+    unseenRequests.length
   );
 
-  const { data: session } = useSession();
-
   useEffect(() => {
-    pusherClient.subscribe(
-      toPusherKey(`user:${session?.user.id}:incoming_friend_requests`)
-    );
-    pusherClient.subscribe(toPusherKey(`user:${session?.user.id}:friends`));
+    // Do fetch here...
+    // Triggers when "debouncedValue" changes
+    if (debouncedValue === "") {
+      setFilteredFriends(friends);
+    } else {
+      const newValue = friends.filter((friend) =>
+        friend.name.toLowerCase().includes(debouncedValue.toLowerCase())
+      );
+      setFilteredFriends(newValue);
+    }
+  }, [debouncedValue]);
 
-    const friendRequestHandler = () => {
-      setUnseenRequestCount((prev) => prev + 1);
+  const pathname = usePathname();
+  useEffect(() => {
+    if (pathname === "/dashboard/requests") {
+      setUnseenRequestsCount(0);
+    }
+
+    pusherClient.subscribe(
+      toPusherKey(`user:${session.id}:incoming_friend_requests`)
+    );
+    pusherClient.subscribe(toPusherKey(`user:${session.id}:friends`));
+
+    const friendRequestHandler = ({
+      senderImage,
+      senderName,
+    }: IncomingFriendRequest) => {
+      setUnseenRequestsCount((prev) => prev + 1);
+      const audio = new Audio("/audio/notification-sound.wav");
+
+      audio.play();
+      toast.custom((t) => (
+        <RequestToast t={t} senderImg={senderImage} senderName={senderName} />
+      ));
     };
 
     const addedFriendHandler = () => {
-      setUnseenRequestCount((prev) => prev - 1);
+      setUnseenRequestsCount((prev) => prev - 1);
     };
 
     pusherClient.bind("incoming_friend_requests", friendRequestHandler);
@@ -48,79 +105,14 @@ const FriendRequestOption: React.FC<{ initialUnseenRequestsCount: number }> = ({
 
     return () => {
       pusherClient.unsubscribe(
-        toPusherKey(`user:${session?.user.id}:incoming_friend_requests`)
+        toPusherKey(`user:${session.id}:incoming_friend_requests`)
       );
-      pusherClient.unsubscribe(toPusherKey(`user:${session?.user.id}:friends`));
+      pusherClient.unsubscribe(toPusherKey(`user:${session.id}:friends`));
 
       pusherClient.unbind("new_friend", addedFriendHandler);
       pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
     };
-  }, [session?.user.id]);
-  return (
-    <li className="group hover:bg-accent-primary hover:text-white rounded-lg p-2 relative">
-      <Link href="/dashboard/requests" className="flex items-center gap-x-8">
-        <AiOutlineUser />
-
-        <span>Friend Requests</span>
-        {unseenRequestCount > 0 ? (
-          <span className="absolute -top-2 -right-2 bg-accent-secondary rounded-full w-4 h-4 text-xs grid place-items-center text-white ">
-            {unseenRequestCount}
-          </span>
-        ) : null}
-      </Link>
-    </li>
-  );
-};
-
-const Sidebar: React.FC<{ unseenRequests: IncomingFriendRequest[]; session: User,friends:User[] }> = ({
-  unseenRequests,
-  session,
-  friends
-}) => {
-  const [unseenRequestsCount,setUnseenRequestsCount] = useState<number>(unseenRequests.length);
-
-  const pathname = usePathname()
-  useEffect(()=>{
-    if(pathname === "/dashboard/requests") {
-      setUnseenRequestsCount(0)
-    }
-
-      pusherClient.subscribe(
-        toPusherKey(`user:${session.id}:incoming_friend_requests`)
-      );
-      pusherClient.subscribe(toPusherKey(`user:${session.id}:friends`));
-  
-      const friendRequestHandler = ({ senderImage,senderName }:IncomingFriendRequest) => {
-        setUnseenRequestsCount((prev) => prev + 1);
-        const audio = new Audio('/audio/notification-sound.wav');
-
-        audio.play();
-        toast.custom((t)=>(
-          <RequestToast
-            t={t}
-            senderImg={senderImage}
-            senderName={senderName}
-          />
-        ))
-      };
-  
-      const addedFriendHandler = () => {
-        setUnseenRequestsCount((prev) => prev - 1);
-      };
-  
-      pusherClient.bind("incoming_friend_requests", friendRequestHandler);
-      pusherClient.bind("new_friend", addedFriendHandler);
-  
-      return () => {
-        pusherClient.unsubscribe(
-          toPusherKey(`user:${session.id}:incoming_friend_requests`)
-        );
-        pusherClient.unsubscribe(toPusherKey(`user:${session.id}:friends`));
-  
-        pusherClient.unbind("new_friend", addedFriendHandler);
-        pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
-      };
-  },[pathname,session.id])
+  }, [pathname, session.id]);
   return (
     <div className=" min-h-screen bg-white fixed  left-0 top-0 w-1/4 border-r ">
       <div className="px-4">
@@ -138,21 +130,11 @@ const Sidebar: React.FC<{ unseenRequests: IncomingFriendRequest[]; session: User
           <ChatMenu unseenRequestsCount={unseenRequestsCount} />
         </div>
         <div className="flex w-full max-w-sm items-center space-x-2 ">
-          <div className="border border-input w-full rounded-lg flex items-center px-2">
-            <FaSearch  className="text-gray-500"/>
-
-            <Input
-              type="text"
-              placeholder="Search or start a new chat"
-              className="border-none"
-            />
-          </div>
+          <SearchFriendsInput value={debouncedValue} handleChange={handleChange} />
           <BsFilter className="text-2xl cursor-pointer" />
         </div>
-       
       </div>
-      <SidebarChatList friends={friends} sessionId={session.id} />
-
+      <SidebarChatList  friends={filteredFriends} sessionId={session.id} />
 
       {/* <ul className="list-none py-4 text-xl flex-col flex h-full ">
         {links.map((link, i) => (

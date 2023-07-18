@@ -66,6 +66,7 @@ const AddFriendForm: React.FC = () => {
           {...register("email")}
           type="email"
           placeholder="Email"
+          className="border focus:ring-2 ring-accentPrimary "
         />
         <Button
           type="submit"

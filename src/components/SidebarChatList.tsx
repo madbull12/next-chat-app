@@ -77,10 +77,11 @@ const SidebarChatList = ({ friends,sessionId }: Props) => {
   if(friends.length === 0) {
     return (
       <div className="p-2 flex flex-col gap-y-2 items-center">
-        <p className="text-lg font-bold">Oops... You have no friends </p>
+
+        <p className="text-lg font-bold">Oops... no friends found</p>
         <img src="/no-friends.svg" className="min-w-[50%]" />
-        <p className="text-lg font-bold">You can look for friends here </p>
-        <Button className="bg-accent-primary hover:bg-accent-secondary">
+        <p className="text-lg font-bold">You can add friends here </p>
+        <Button >
           <Link href="/dashboard/add-friends">Add friends</Link>
           
         </Button>
