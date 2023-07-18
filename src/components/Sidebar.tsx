@@ -130,7 +130,7 @@ const Sidebar: React.FC<{
           <ChatMenu unseenRequestsCount={unseenRequestsCount} />
         </div>
         <div className="flex w-full max-w-sm items-center space-x-2 ">
-          <SearchFriendsInput value={debouncedValue} handleChange={handleChange} />
+          <SearchFriendsInput value={searchValue} handleChange={handleChange} />
           <BsFilter className="text-2xl cursor-pointer" />
         </div>
       </div>
