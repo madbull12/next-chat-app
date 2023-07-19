@@ -6,6 +6,8 @@ import { toast } from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "./ui/Button";
 import { pusherClient } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface ChatInputProps {
   chatPartner: User;
@@ -16,7 +18,11 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [userId1, userId2] = chatId.split("--");
+  const myId = userId1 === chatPartner.id ? userId2 : userId1;
 
+  const debouncedInput = useDebounce(input, 500);
   const sendMessage = async () => {
     if (!input) return;
     setIsLoading(true);
@@ -32,16 +38,42 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
     }
   };
 
-  useEffect(()=>{
-    pusherClient.subscribe("")
-  },[input])
+  useEffect(() => {
+    const channel = pusherClient.subscribe(
+      toPusherKey(`typing-channel:${chatId}`)
+    );
+    (async function () {
+      await axios.post("/api/message/typing", {
+        chatId,
+        userId: myId,
+      });
+    })();
+
+    const handleTyping = ({ userId: typingId }: { userId: string }) => {
+      console.log(typingId);
+
+      if (typingId !== myId) {
+        setIsTyping(true);
+      } else {
+        setIsTyping(false);
+      }
+
+      console.log(isTyping);
+    };
+    channel.bind("typing-event", handleTyping);
+
+    return () => {
+      channel.unsubscribe();
+      channel.unbind("typing-event", handleTyping);
+    };
+  }, [debouncedInput]);
 
   return (
     <div className="border-t border-gray-200 p-4 mb-2 sm:mb-0 ">
+      {isTyping ? <>is Typing</> : <></>}
       <div className="relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-accent-primary">
         <TextareaAutosize
           ref={textareaRef}
-          
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
