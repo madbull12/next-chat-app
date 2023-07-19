@@ -5,9 +5,10 @@ import { FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "./ui/Button";
-import { pusherClient } from "@/lib/pusher";
+import { pusherClient, pusherServer } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useThrottle } from "@/hooks/useThrottle";
 
 interface ChatInputProps {
   chatPartner: User;
@@ -22,7 +23,7 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
   const [userId1, userId2] = chatId.split("--");
   const myId = userId1 === chatPartner.id ? userId2 : userId1;
 
-  const debouncedInput = useDebounce(input, 500);
+  const throttledInput = useThrottle(input)
   const sendMessage = async () => {
     if (!input) return;
     setIsLoading(true);
@@ -39,9 +40,29 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
   };
 
   useEffect(() => {
+    let timeout:NodeJS.Timeout;;
     const channel = pusherClient.subscribe(
       toPusherKey(`typing-channel:${chatId}`)
     );
+
+    const handleKeyDown = () => {
+      clearTimeout(timeout);
+
+      (async function () {
+        await axios.post("/api/message/typing", {
+          chatId,
+          userId: myId,
+        });
+      })();
+    };
+
+    const handleKeyUp = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setIsTyping(false);
+      }, 2000);
+    };
+
     (async function () {
       await axios.post("/api/message/typing", {
         chatId,
@@ -50,23 +71,27 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
     })();
 
     const handleTyping = ({ userId: typingId }: { userId: string }) => {
-      console.log(typingId);
-
+     
       if (typingId !== myId) {
         setIsTyping(true);
+          setTimeout(() => setIsTyping(false), 1000);
+
       } else {
         setIsTyping(false);
       }
 
       console.log(isTyping);
     };
-    channel.bind("typing-event", handleTyping);
 
+    channel.bind("typing-event",handleTyping)
+
+    
     return () => {
       channel.unsubscribe();
-      channel.unbind("typing-event", handleTyping);
+    channel.unbind("type-event",handleTyping)
+
     };
-  }, [debouncedInput]);
+  }, [throttledInput]);
 
   return (
     <div className="border-t border-gray-200 p-4 mb-2 sm:mb-0 ">

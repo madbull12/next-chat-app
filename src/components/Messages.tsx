@@ -45,7 +45,6 @@ const Messages: React.FC<MessagesProps> = ({
 
 
 
-
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
 
