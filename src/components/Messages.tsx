@@ -103,7 +103,7 @@ const Messages: React.FC<MessagesProps> = ({
             const hasNextMessageFromSameUser =
               messages[i + 1]?.senderId === messages[i].senderId;
             return (
-              <div className="p-4">
+              <div className="p-4" key={i}>
                 <div
                   className={cn("flex items-end", {
                     "justify-end": isCurrentUser,
